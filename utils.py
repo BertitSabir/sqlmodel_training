@@ -1,9 +1,9 @@
-
 from contextlib import contextmanager
 from typing import Generator
-from sqlmodel import create_engine, SQLModel, Session, text, MetaData
+from sqlmodel import create_engine, SQLModel, Session, text
 from sqlalchemy.engine import Engine
 from pathlib import Path
+
 
 def get_database_url(name: str) -> str:
     """
@@ -16,11 +16,12 @@ def get_database_url(name: str) -> str:
         str: The SQLite database URL.
     """
     # check if a databse with this name exist in the current directory
-    if Path(f'{name}.db').exists():
-        print(f'Database {name}.db already exists. Deleting it.')
-        Path(f'{name}.db').unlink()
+    if Path(f"{name}.db").exists():
+        print(f"Database {name}.db already exists. Deleting it.")
+        Path(f"{name}.db").unlink()
     # return the SQLite database URL
-    return f'sqlite:///{name}.db'
+    return f"sqlite:///{name}.db"
+
 
 def get_engine(db_url: str) -> Engine:
     """Create and return a new SQLAlchemy engine using the provided database URL.
@@ -64,8 +65,7 @@ def create_db_and_tables(engine: Engine, models=None):
     if models:
         # Create only the specified models
         SQLModel.metadata.create_all(
-            engine,
-            tables=[model.__table__ for model in models]
+            engine, tables=[model.__table__ for model in models]
         )
     else:
         # Create all models
