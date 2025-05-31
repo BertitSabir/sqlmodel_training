@@ -1,7 +1,7 @@
 from datetime import date
 
-from students.models import Student, Course, Enrollment, Club, StudentClubLink
-from utils import get_database_url, get_engine, create_db_and_tables, get_session
+from students.models import Club, Course, Enrollment, Student, StudentClubLink
+from utils import create_db_and_tables, get_database_url, get_engine, get_session
 
 
 def create_clubs(session):
@@ -50,10 +50,14 @@ def create_enrollments(session):
 
     # Enroll students:
     student3_enrollment = Enrollment(
-        course=math_course, student=student3, enrollment_date=date(2024, 9, 1)
+        course=math_course,
+        student=student3,
+        enrollment_date=date(2024, 9, 1),
     )
     student4_enrollment = Enrollment(
-        course=math_course, student=student4, enrollment_date=date(2024, 9, 2)
+        course=math_course,
+        student=student4,
+        enrollment_date=date(2024, 9, 2),
     )
 
     session.add(student3_enrollment)
@@ -69,7 +73,8 @@ def app():
     db_url = get_database_url(name="students")
     engine = get_engine(db_url=db_url)
     create_db_and_tables(
-        engine, models=[Student, Course, Enrollment, Club, StudentClubLink]
+        engine,
+        models=[Student, Course, Enrollment, Club, StudentClubLink],
     )
     with get_session(engine) as session:
         create_clubs(session)

@@ -1,8 +1,9 @@
+from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Generator
-from sqlmodel import create_engine, SQLModel, Session, text
-from sqlalchemy.engine import Engine
 from pathlib import Path
+
+from sqlalchemy.engine import Engine
+from sqlmodel import Session, SQLModel, create_engine, text
 
 
 def get_database_url(name: str) -> str:
@@ -14,6 +15,7 @@ def get_database_url(name: str) -> str:
 
     Returns:
         str: The SQLite database URL.
+
     """
     # check if a databse with this name exist in the current directory
     if Path(f"{name}.db").exists():
@@ -24,19 +26,21 @@ def get_database_url(name: str) -> str:
 
 
 def get_engine(db_url: str) -> Engine:
-    """Create and return a new SQLAlchemy engine using the provided database URL.
+    """
+    Create and return a new SQLAlchemy engine using the provided database URL.
 
     Args:
         db_url (str): The database URL to connect to.
 
     Returns:
         Engine: A SQLAlchemy Engine instance connected to the specified database.
+
     """
     return create_engine(url=db_url, echo=True)
 
 
 @contextmanager
-def get_session(engine: Engine) -> Generator[Session, None, None]:
+def get_session(engine: Engine) -> Generator[Session]:
     """
     Context manager that yields a new Session object bound to the provided engine.
 
@@ -45,6 +49,7 @@ def get_session(engine: Engine) -> Generator[Session, None, None]:
 
     Yields:
         Session: A SQLModel Session instance.
+
     """
     session = Session(engine)
     try:
@@ -61,11 +66,13 @@ def create_db_and_tables(engine: Engine, models=None):
         engine (Engine): The SQLAlchemy Engine instance to use for table creation.
         models (list, optional): List of SQLModel classes to create tables for.
                                If None, uses all registered models.
+
     """
     if models:
         # Create only the specified models
         SQLModel.metadata.create_all(
-            engine, tables=[model.__table__ for model in models]
+            engine,
+            tables=[model.__table__ for model in models],
         )
     else:
         # Create all models
@@ -81,5 +88,6 @@ def clear_db_and_tables(engine: Engine):
 
     Args:
         engine (Engine): The SQLAlchemy Engine instance to use for dropping tables.
+
     """
     SQLModel.metadata.drop_all(engine)

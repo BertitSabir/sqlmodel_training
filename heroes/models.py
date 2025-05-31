@@ -1,4 +1,4 @@
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import Field, Relationship, SQLModel
 
 
 class HeroTeamLink(SQLModel, table=True):
@@ -17,7 +17,9 @@ class Team(SQLModel, table=True):
 class HeroMissionLink(SQLModel, table=True):
     hero_id: int | None = Field(default=None, foreign_key="hero.id", primary_key=True)
     mission_id: int | None = Field(
-        default=None, foreign_key="mission.id", primary_key=True
+        default=None,
+        foreign_key="mission.id",
+        primary_key=True,
     )
     role: str = Field(default="member")
 

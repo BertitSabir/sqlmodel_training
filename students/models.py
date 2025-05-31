@@ -1,12 +1,14 @@
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from decimal import Decimal
 
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import Field, Relationship, SQLModel
 
 
 class StudentClubLink(SQLModel, table=True):
     student_id: int | None = Field(
-        default=None, foreign_key="student.id", primary_key=True
+        default=None,
+        foreign_key="student.id",
+        primary_key=True,
     )
     club_id: int | None = Field(default=None, foreign_key="club.id", primary_key=True)
 
@@ -19,7 +21,8 @@ class Student(SQLModel, table=True):
     birth_date: date
 
     clubs: list["Club"] = Relationship(
-        back_populates="students", link_model=StudentClubLink
+        back_populates="students",
+        link_model=StudentClubLink,
     )
     enrollments: list["Enrollment"] = Relationship(back_populates="student")
 
@@ -27,10 +30,11 @@ class Student(SQLModel, table=True):
 class Club(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str = Field(max_length=50)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     students: list[Student] = Relationship(
-        back_populates="clubs", link_model=StudentClubLink
+        back_populates="clubs",
+        link_model=StudentClubLink,
     )
 
 
@@ -45,10 +49,14 @@ class Course(SQLModel, table=True):
 
 class Enrollment(SQLModel, table=True):
     student_id: int | None = Field(
-        default=None, foreign_key="student.id", primary_key=True
+        default=None,
+        foreign_key="student.id",
+        primary_key=True,
     )
     course_id: int | None = Field(
-        default=None, foreign_key="course.id", primary_key=True
+        default=None,
+        foreign_key="course.id",
+        primary_key=True,
     )
     grade: Decimal | None
     enrollment_date: date

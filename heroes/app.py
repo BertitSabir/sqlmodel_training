@@ -1,15 +1,15 @@
-from sqlmodel import Session, select, col
+from sqlmodel import Session, col, select
 
-from utils import get_database_url, get_engine, create_db_and_tables, get_session
-from heroes.models import Hero, Team, Mission, HeroMissionLink, HeroTeamLink
+from heroes.models import Hero, HeroMissionLink, HeroTeamLink, Mission, Team
+from utils import create_db_and_tables, get_database_url, get_engine, get_session
 
 
 def create_heroes(session: Session):
     # Heroes
-    hero_batman = Hero(name="Batman", secret_name="Bruce Wayne", age=35)
-    hero_superman = Hero(name="Superman", secret_name="Clark Kent", age=30)
-    hero_flash = Hero(name="Flash", secret_name="Barry Allen", age=28)
-    hero_cyborg = Hero(name="Cyborg", secret_name="Victor Stone", age=25)
+    hero_batman = Hero(name="Batman", secret_name="Bruce Wayne", age=35)  # noqa: S106
+    hero_superman = Hero(name="Superman", secret_name="Clark Kent", age=30)  # noqa: S106
+    hero_flash = Hero(name="Flash", secret_name="Barry Allen", age=28)  # noqa: S106
+    hero_cyborg = Hero(name="Cyborg", secret_name="Victor Stone", age=25)  # noqa: S106
 
     # Teams
     team_justice_league = Team(
@@ -40,7 +40,7 @@ def update_heros(session: Session):
     hero_cyborg = session.exec(select(Hero).where(col(Hero.name) == "Cyborg")).first()
     print(f"hero_batman hero found: {hero_batman}")
     team_justice = session.exec(
-        select(Team).where(col(Team.name) == "Justice League")
+        select(Team).where(col(Team.name) == "Justice League"),
     ).first()
     print(f"** team justice heroes before Batman retires: {team_justice.heroes}")
     team_justice.heroes.remove(hero_batman)
@@ -48,16 +48,16 @@ def update_heros(session: Session):
     session.commit()
     session.refresh(team_justice)
     print(
-        f"** team justice heroes after Batman retires and cyborg joins: {team_justice.heroes}"
+        f"** team justice heroes after Batman retires and cyborg joins: {team_justice.heroes}",
     )
 
 
 def create_missions(session: Session):
     # Heroes
-    hero_batman = Hero(name="Batman", secret_name="Bruce Wayne", age=35)
-    hero_superman = Hero(name="Superman", secret_name="Clark Kent", age=30)
-    hero_flash = Hero(name="Flash", secret_name="Barry Allen", age=28)
-    hero_cyborg = Hero(name="Cyborg", secret_name="Victor Stone", age=25)
+    hero_batman = Hero(name="Batman", secret_name="Bruce Wayne", age=35)  # noqa: S106
+    hero_superman = Hero(name="Superman", secret_name="Clark Kent", age=30)  # noqa: S106
+    hero_flash = Hero(name="Flash", secret_name="Barry Allen", age=28)  # noqa: S106
+    hero_cyborg = Hero(name="Cyborg", secret_name="Victor Stone", age=25)  # noqa: S106
 
     # Missions
     mission_rescue = Mission(
@@ -71,16 +71,24 @@ def create_missions(session: Session):
 
     # Hero Mission Links
     batman_mission_rescue_role = HeroMissionLink(
-        hero=hero_batman, mission=mission_rescue, role="leader"
+        hero=hero_batman,
+        mission=mission_rescue,
+        role="leader",
     )
     cyborg_mission_rescue_role = HeroMissionLink(
-        hero=hero_cyborg, mission=mission_rescue, role="member"
+        hero=hero_cyborg,
+        mission=mission_rescue,
+        role="member",
     )
     flash_mission_save_world_role = HeroMissionLink(
-        hero=hero_flash, mission=mission_save_world, role="member"
+        hero=hero_flash,
+        mission=mission_save_world,
+        role="member",
     )
     superman_mission_save_world_role = HeroMissionLink(
-        hero=hero_superman, mission=mission_save_world, role="leader"
+        hero=hero_superman,
+        mission=mission_save_world,
+        role="leader",
     )
 
     # Add missions and heroes:
@@ -94,10 +102,10 @@ def create_missions(session: Session):
     session.refresh(mission_rescue)
     session.refresh(mission_save_world)
     print(
-        f"mission: {mission_rescue}, heroes: {[link.hero.name for link in mission_rescue.hero_links]}"
+        f"mission: {mission_rescue}, heroes: {[link.hero.name for link in mission_rescue.hero_links]}",
     )
     print(
-        f"mission: {mission_save_world}, heroes: {[link.hero.name for link in mission_save_world.hero_links]}"
+        f"mission: {mission_save_world}, heroes: {[link.hero.name for link in mission_save_world.hero_links]}",
     )
 
 
@@ -108,7 +116,8 @@ def app():
     db_url = get_database_url(name="heroes")
     engine = get_engine(db_url=db_url)
     create_db_and_tables(
-        engine, models=[Hero, Team, Mission, HeroMissionLink, HeroTeamLink]
+        engine,
+        models=[Hero, Team, Mission, HeroMissionLink, HeroTeamLink],
     )
     with get_session(engine) as session:
         create_heroes(session)
